@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word Guessing Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f0f0;
+      text-align: center;
+    }
+
+    h1 {
+      color: #a841d0;
+    }
+
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    .result {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .game-over {
+      color: red;
+    }
+
+    .success {
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h1>Word Guessing Game</h1>
+  
+  <p id="message">Guess the secret word!</p>
+
+  <!-- Input and Submit Button -->
+  <input type="text" id="guessInput" placeholder="Enter your guess">
+  <button onclick="submitGuess()">Submit Guess</button>
+
+  <!-- Displaying the number of attempts left -->
+  <p id="attempts">Attempts left: 5</p>
+
+  <!-- Result feedback -->
+  <p id="result" class="result"></p>
+
+  <script>
+    // List of possible secret words
+    const words = ["apple", "banana", "grape", "peach", "kiwi", "orange"];
+
+    // Randomly select a secret word from the array
+    let secretWord = words[Math.floor(Math.random() * words.length)];
+    let attemptsLeft = 5;  // Set the number of attempts allowed
+    let gameOver = false;
+
+    // Function to handle guess submission
+    function submitGuess() {
+      if (gameOver) {
+        return; // Prevent further guesses if the game is over
+      }
+
+      // Get the input guess and trim spaces, convert it to lowercase
+      let guess = document.getElementById("guessInput").value.trim().toLowerCase();
+
+      // Check if input is empty
+      if (guess === "") {
+        updateMessage("Please enter a valid word!");
+        return;
+      }
+
+      // Check if the guess is correct
+      if (guess === secretWord) {
+        updateMessage("Congratulations! You guessed the secret word!", true);
+        document.body.style.backgroundColor = "lightgreen";  // Change background on win
+        gameOver = true;  // Set game over flag
+        return;
+      }
+
+      // Decrease attempts and check if the game is over
+      attemptsLeft--;
+
+      // Update attempts display
+      document.getElementById("attempts").textContent = `Attempts left: ${attemptsLeft}`;
+
+      // If no attempts are left, game over
+      if (attemptsLeft === 0) {
+        updateMessage(`Game over! The secret word was '${secretWord}'.`, false);
+        document.body.style.backgroundColor = "lightcoral";  // Change background on lose
+        gameOver = true;
+      } else {
+        updateMessage(`Incorrect guess. You have ${attemptsLeft} attempts left. Try again!`);
+      }
+
+      // Clear the input box after each guess
+      document.getElementById("guessInput").value = "";
+    }
+
+    // Function to update the message on the screen
+    function updateMessage(message, isSuccess = false) {
+      const resultElement = document.getElementById("result");
+      resultElement.textContent = message;
+
+      if (isSuccess) {
+        resultElement.classList.add("success");
+        resultElement.classList.remove("game-over");
+      } else {
+        resultElement.classList.add("game-over");
+        resultElement.classList.remove("success");
+      }
+    }
+
+    // Optional: Adding a restart button (could be implemented here)
+    function restartGame() {
+      secretWord = words[Math.floor(Math.random() * words.length)];  // Pick a new word
+      attemptsLeft = 5;  // Reset attempts
+      gameOver = false;
+      document.getElementById("attempts").textContent = `Attempts left: ${attemptsLeft}`;
+      document.getElementById("result").textContent = "";
+      document.getElementById("guessInput").value = "";
+      document.body.style.backgroundColor = "#f0f0f0";  // Reset background color
+      updateMessage("Guess the secret word!");
+    }
+  </script>
+</body>
+</html>
